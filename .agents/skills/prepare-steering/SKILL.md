@@ -1,9 +1,9 @@
 ---
-name: plan-feature
-description: docs/ideas配下の日付付き機能仕様から.steeringのrequirements.md、design.md、tasklist.mdだけを作成する。実装前の調査と作業計画が必要な場合に明示的に使用する。initial-requirements、文書だけのレビュー、コード実装には使用しない。
+name: prepare-steering
+description: docs/ideas配下の確定した日付付き機能仕様から.steeringのrequirements.md、design.md、tasklist.mdだけを準備する。実装前の調査と作業計画が必要な場合に明示的に使用する。initial-requirements、文書だけのレビュー、コード実装には使用しない。
 ---
 
-# Plan Feature
+# Prepare Steering
 
 指定仕様を正本として、実装へ渡せるタスク計画を作成し、設計完了で停止する。
 
@@ -11,8 +11,9 @@ description: docs/ideas配下の日付付き機能仕様から.steeringのrequir
 
 - `docs/ideas/YYYYMMDD-[feature-name].md`を1件、明示入力として受け取る。
 - 引数なし、ファイル不存在、`docs/ideas/`外、Markdown以外、`docs/ideas/initial-requirements.md`の場合は変更せず停止する。
+- 入力仕様の内容がユーザーと合意済みであることを確認する。`Status: confirmed`を確認し、Statusのない既存仕様では会話上の合意を根拠にしてよい。`draft`または合意不明なら計画を開始せず、`$define-requirements`での確定を案内する。仕様をこのWorkflowで確定・更新しない。
 - `docs/product-requirements.md`、`docs/functional-design.md`、`docs/architecture.md`、`docs/repository-structure.md`、`docs/development-guidelines.md`、`docs/glossary.md`のいずれかが不足する場合は停止し、`$setup-project`を案内する。
-- 仕様が計画に必要な判断を欠く場合は推測で埋めず、main agentがユーザーへ確認する。
+- 仕様が計画に必要な判断を欠く場合は推測で埋めず、main agentがユーザーへ確認する。要件の再具体化が必要なら`$define-requirements`を案内し、暗黙には開始しない。
 
 ## 実行手順
 
@@ -28,6 +29,6 @@ description: docs/ideas配下の日付付き機能仕様から.steeringのrequir
 ## 完了条件
 
 - 対象`.steering/`に`requirements.md`、`design.md`、`tasklist.md`だけが計画成果物として作成・更新されている。
-- 3文書が相互整合し、`$implement-feature`へ渡せる。
+- 3文書が相互整合し、`$implement-steering`へ渡せる。作成したsteeringパスを次の明示入力として案内する。
 - アプリコード、入力仕様、永続文書を変更していない。
 - 実装や実装検証を開始せず、計画作成で終了する。

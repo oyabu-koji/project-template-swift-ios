@@ -2,9 +2,9 @@
 
 Use this document as the starting point for a new project before durable `docs/` files are created.
 
-`define-feature` should create or update this file only when the project-wide bootstrap spec is needed.
+`define-requirements` should create or update this file only when the project-wide bootstrap spec is needed, after clarifying and agreeing on the requirements with the user.
 
-Do not use this file as input to `plan-feature`. Run `setup-project` first, then create later feature specs under `docs/ideas/YYYYMMDD-[feature-name].md`.
+Do not use this file as input to `prepare-steering`. Run `setup-project` first, then create later feature specs under `docs/ideas/YYYYMMDD-[feature-name].md`.
 
 ## Project Overview
 
@@ -42,6 +42,12 @@ Do not use this file as input to `plan-feature`. Run `setup-project` first, then
 - Screen 2:
 - Screen 3:
 
+## Key Behaviors / Exceptions
+
+- Main user flow and expected outcomes:
+- Relevant data and user-visible state changes:
+- Important errors, permission denial, and recovery behavior:
+
 ## Technical Constraints
 
 - Language: Swift
@@ -70,6 +76,7 @@ Do not use this file as input to `plan-feature`. Run `setup-project` first, then
 
 ## Acceptance Criteria
 
+- Describe observable results for agreed behaviors and important exceptions; do not leave example labels in confirmed requirements.
 - Criterion 1:
 - Criterion 2:
 - Criterion 3:

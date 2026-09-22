@@ -20,6 +20,14 @@
 - 作成後はCodexが既存のproject/workspace、scheme、target、destination、テスト構成を確認し、計画に従ってSwiftコードを実装する。名前や実行先は推測しない。
 - ビルド・テストは確認済みの構成を指定した `xcodebuild`、起動・画面確認はXcodeとSimulatorまたは実機を使う。詳細は `.agents/skills/development-guidelines/references/process.md` を参照する。
 
+## Workflow
+
+- 初期開発: `$init-project` → `$define-requirements` → `$setup-project`
+- セットアップ後の機能開発: `$define-requirements` → `$prepare-steering` → `$implement-steering` → `$validate-implementation`
+- `$review-docs` は必要時の独立した読み取り専用レビューとする
+- 要件定義は対話と合意、setupは永続6文書、prepareはsteering計画、implementは実装と進捗・検証証跡、validateは変更を伴わない独立検証を担当する
+- 次工程は案内に留め、別Workflowを暗黙に開始しない。invocation policyと詳細なroutingは `AGENTS.md` を参照する
+
 ## 制約
 
 - 確定済みのXcode・Swift設定・最低対応iOSを明示依頼なしに変更しない

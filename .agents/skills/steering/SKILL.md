@@ -9,12 +9,13 @@ description: docs/ideasの日付付き仕様から作成された.steering/[YYYY
 
 - `.steering/[YYYYMMDD]-[task]/` を実装単位の要求、設計、進捗、検証証跡の正本にする
 - `docs/ideas/` の仕様を複製せず、今回の実装範囲と判断へ変換する
-- `$plan-feature`、`$implement-feature`、`$validate-implementation` の受け渡しを保つ
+- `$prepare-steering`、`$implement-steering`、`$validate-implementation` の受け渡しを保つ
+- `$steering`は内部で明示使用する専門Skillであり、ユーザー向けの計画・実装Workflowとは別に維持する
 
 ## 入力契約
 
-- `$plan-feature`: `docs/ideas/YYYYMMDD-[feature-name].md`
-- `$implement-feature` / `$validate-implementation`: `.steering/[YYYYMMDD]-[task]/`
+- `$prepare-steering`: `docs/ideas/YYYYMMDD-[feature-name].md`
+- `$implement-steering` / `$validate-implementation`: `.steering/[YYYYMMDD]-[task]/`
 - `docs/ideas/initial-requirements.md` から直接steeringを作らない
 
 ## 成果物

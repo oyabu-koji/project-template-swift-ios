@@ -12,15 +12,19 @@
 書き込みまたは高コストな処理を伴う次のWorkflow Skillは、ユーザーが `$skill-name` を明示した場合だけ開始する。
 
 - `$init-project`: 人間が作成したXcodeプロジェクトを確認し、最小開発基盤を整える
-- `$define-feature`: 初期要件または追加仕様を作成・更新する
+- `$define-requirements`: 初期要件または追加・変更要件を対話で詰め、合意後に仕様へ保存する
 - `$setup-project`: validな初期要件から6つの永続文書を作る
-- `$plan-feature`: feature specから `.steering/` の計画を作る
-- `$implement-feature`: `.steering/` に従って実装する
+- `$prepare-steering`: 確定したfeature specから `.steering/` の要求・設計・tasklistを準備する
+- `$implement-steering`: 指定された `.steering/` に従って実装し、進捗と検証証跡を同期する
 - `$validate-implementation`: 実装済みの変更を専門agentで検証する
 
 同等の自然文依頼だけを受けた場合は、書き込みや高コストな処理を開始せず、対応する `$skill-name` の明示を求める。
 
 `$review-docs` は読み取り専用レビューのため、明示呼び出しと「この文書をレビューして」のような自然文の両方を受け付ける。
+
+初期開発は `$init-project` → `$define-requirements` → `$setup-project`、初期セットアップ後の機能開発は `$define-requirements` → `$prepare-steering` → `$implement-steering` → `$validate-implementation` の順に進める。矢印は次工程の案内であり、別Workflowを暗黙に開始する許可ではない。`$review-docs` は必要時に独立して使用する。
+
+初期要件がvalidでも永続6文書が不足している場合、`$define-requirements`は追加仕様へ進まず`$setup-project`を案内する。専門Skillsはすべて明示呼び出し専用であり、内部の `$steering` とユーザー向けの `$prepare-steering` / `$implement-steering` を区別する。
 
 ## Agent delegation
 
@@ -47,7 +51,7 @@
 ## Document and task rules
 
 - `docs/ideas/initial-requirements.md` は `$setup-project` のbootstrap入力にだけ使用する
-- `docs/ideas/YYYYMMDD-[feature-name].md` は `$plan-feature` の標準入力とする
+- `docs/ideas/YYYYMMDD-[feature-name].md` は `$prepare-steering` の標準入力とする
 - 仕様は `docs/ideas/`、決定記録は `docs/decisions/`、短期計画は `.steering/` に置く
 - 安定した要件・設計・用語・開発規則が変わった場合は、関連する `docs/` を更新する
 - reviewとvalidationでは対象ファイルを変更しない

@@ -10,8 +10,8 @@ description: validなdocs/ideas/initial-requirements.mdから6つの永続プロ
 ## 入力と事前確認
 
 1. 入力を`docs/ideas/initial-requirements.md`に固定する。日付付き追加仕様を入力にしない。
-2. [initial-requirements-validation.md](../define-feature/references/initial-requirements-validation.md)を読み、必須6領域を同じ定義で判定する。
-3. `missing`または`blank`なら永続文書を一切生成せず、領域ごとの不足を列挙して停止し、`$define-feature`を案内する。
+2. [initial-requirements-validation.md](../define-requirements/references/initial-requirements-validation.md)を読み、必須6領域を同じ定義で判定する。
+3. `missing`または`blank`なら永続文書を一切生成せず、領域ごとの不足を列挙して停止し、`$define-requirements`を案内する。
 4. `valid`でも、永続文書の内容を大きく変える`Open Questions`があればmain agentがユーザーへ確認する。
 5. 既存の永続文書がある場合は、初期作成か更新か、所有対象をユーザーと確定してから進む。暗黙に上書きしない。
 

@@ -1,16 +1,17 @@
 ---
-name: implement-feature
+name: implement-steering
 description: 指定された.steeringタスクのrequirements、design、tasklistに従って機能を実装し、進捗と検証証跡を同期する。計画済みタスクを実行する場合に明示的に使用する。計画作成、計画なしの実装、独立した最終検証には使用しない。
 ---
 
-# Implement Feature
+# Implement Steering
 
 `.steering/`を進捗の正本として、所有範囲を分けながらタスクを1件ずつ実装する。
 
 ## 入力契約と停止条件
 
 - `.steering/[YYYYMMDD]-[task]/`を1件、明示入力として受け取る。
-- 対象が存在しない、`.steering/`外、または`requirements.md`、`design.md`、`tasklist.md`のいずれかが不足する場合は変更を開始しない。
+- 引数なし、複数候補、対象が曖昧な場合は、ユーザーへ対象steeringを確認する。最新・未完了などの理由で別のsteeringを勝手に選択しない。
+- 対象が存在しない、または`requirements.md`、`design.md`、`tasklist.md`のいずれかが不足する場合は変更を開始せず、`$prepare-steering`を案内する。新しいsteeringを勝手に作成せず、別Workflowも暗黙に開始しない。`.steering/`外の指定は受け付けず対象の再指定を求める。
 - 要求、設計、taskの矛盾や実装に必要な重要判断がある場合は、main agentがユーザーへ確認する。
 - 未コミット変更と所有対象が重なる場合は、既存変更を保護できる方針を確定するまで停止する。
 
@@ -40,4 +41,4 @@ description: 指定された.steeringタスクのrequirements、design、tasklis
 - requirements、design、実装、テストが整合し、未解決事項が明示されている。
 - 確認済み構成で必要な検証が実行され、結果と未確認範囲が記録されている。
 - main agentが最終diffと所有範囲を確認している。
-- 最終検証は代行せず、同じsteeringディレクトリを`$validate-implementation`へ渡す。
+- 独立した最終検証は代行せず、同じsteeringディレクトリを明示して`$validate-implementation`を次の工程として案内する。暗黙に開始しない。

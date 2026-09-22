@@ -22,15 +22,30 @@ Codexがリポジトリ単位で自動検出する共有Skillsを配置します
 
 ## Workflow Skills
 
-- `$init-project`
-- `$define-feature`
-- `$setup-project`
-- `$plan-feature`
-- `$implement-feature`
-- `$review-docs`
-- `$validate-implementation`
+| Workflow | 役割 |
+| --- | --- |
+| `$init-project` | 人間が作成したXcodeプロジェクトの最小開発基盤を整える |
+| `$define-requirements` | 質問と回答で初期要件・追加要件を詰め、合意した仕様をdocs/ideasへ保存する |
+| `$setup-project` | validな初期要件から永続6文書を初期作成・レビューする |
+| `$prepare-steering` | 確定した追加仕様からrequirements / design / tasklistだけを準備する |
+| `$implement-steering` | 指定steeringに従い実装・テスト・進捗更新・検証証跡の記録を行う |
+| `$validate-implementation` | implementation_validatorが実装を変更せず独立検証する |
+| `$review-docs` | doc_reviewerがdocs配下の指定文書を読み取り専用レビューする |
 
 `$review-docs` だけは自然文による暗黙呼び出しを許可します。それ以外のWorkflow Skillは `$skill-name` で明示的に呼び出します。
+
+新規アプリは `$init-project` → `$define-requirements` → `$setup-project` の順に進めます。初期セットアップ後の機能開発は `$define-requirements` → `$prepare-steering` → `$implement-steering` → `$validate-implementation` です。`$review-docs` は必要なときに独立して使います。各Workflowは次の操作を案内して終了し、別Workflowを自動実行しません。検証で修正が必要になった場合は、同じsteeringを指定して `$implement-steering` に戻ります。
+
+`$define-requirements` は初期要件の不足・初期要件を詰めている段階では `docs/ideas/initial-requirements.md` を扱います。validでも永続6文書が不足する中間状態では `$setup-project` を案内します。validかつ永続6文書が揃った既存アプリへの変更は、`docs/ideas/YYYYMMDD-[feature-name].md` に保存します。重要な質問を原則2〜4問ずつ重ね、検証可能な受け入れ条件と確定内容への合意を得てから保存します。
+
+呼び出し例（仕様・steeringのパスは実在する対象へ置き換えてください）:
+
+```text
+$define-requirements 録画した動画を端末内で整理する機能の要件を詰めたい
+$prepare-steering docs/ideas/20260922-video-library.md
+$implement-steering .steering/20260922-video-library/
+$validate-implementation .steering/20260922-video-library/
+```
 
 ## Specialist Skills
 
@@ -43,6 +58,8 @@ Codexがリポジトリ単位で自動検出する共有Skillsを配置します
 - `$steering`
 
 専門Skillsはすべて明示呼び出し専用です。`$setup-project` や各担当agentが、文書の依存順と対象作業に応じて名前を明示して使用します。
+
+`$steering` は3文書の構造・進捗・証跡を維持する内部専門Skillです。ユーザー向けの `$prepare-steering` / `$implement-steering` とは別物で、計画作成の `feature_planner` などが明示使用します。
 
 ## Agentsとの関係
 

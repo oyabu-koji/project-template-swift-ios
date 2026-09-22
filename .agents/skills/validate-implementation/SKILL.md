@@ -22,7 +22,7 @@ description: 指定された.steeringの要求・設計・tasklistと実装・�
 4. [Xcode検証手順](../development-guidelines/references/process.md) に従い、project/workspaceの存在、scheme、configuration、destination、test targetとTest actionを確認させる。確認結果から `xcodebuild build` / `xcodebuild test` の方法を決め、名前や実行先を推測しない。アプリのproject/workspaceがなければ人間によるXcodeでの作成を案内し、アプリ検証不能として報告する。文書のみの変更にアプリ構成を要求しない。
 5. 固定カバレッジ閾値は`docs/development-guidelines.md`で合意済みの場合だけ評価する。一覧取得・ビルド・テストが書き込みを必要とする場合、validatorは必要なコマンドと書き込み先をmainへ返す。mainは親ターンのsandboxとapprovalに従って実行可否を判断し、実行した場合は結果と証跡をvalidatorへ返して評価させる。コード・設定・docs・steeringは変更しない。
 6. agentの完了を待ち、結論、重大度順のfinding、根拠ファイルと位置、実行した検証、残課題を受け取る。
-7. main agentが結果と重要な検証出力を照合し、合格、要修正、検証不能のいずれかを日本語で報告する。修正が必要でも、このSkill内では実装へ戻らない。
+7. main agentが結果と重要な検証出力を照合し、合格、要修正、検証不能のいずれかを日本語で報告する。修正が必要なら同じsteeringを対象に`$implement-steering`を案内する。このSkill内ではコード修正やtasklist更新を行わず、実装Workflowを暗黙に開始しない。
 
 ## 完了条件
 
