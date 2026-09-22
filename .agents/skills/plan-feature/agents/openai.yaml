@@ -1,0 +1,6 @@
+interface:
+  display_name: "Plan Feature"
+  short_description: "機能仕様から実装前のsteering計画を作成する"
+  default_prompt: "Use $plan-feature to create a steering plan from a feature specification."
+policy:
+  allow_implicit_invocation: false

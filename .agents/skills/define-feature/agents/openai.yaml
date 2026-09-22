@@ -1,0 +1,6 @@
+interface:
+  display_name: "Define Feature"
+  short_description: "初期要件または追加機能の仕様を対話的に日本語で定義する"
+  default_prompt: "Use $define-feature to create or update a specification under docs/ideas."
+policy:
+  allow_implicit_invocation: false
