@@ -1,32 +1,31 @@
 ---
 name: validate-implementation
-description: 指定された.steeringの要求・設計・tasklistと実装・テストの整合性をread-onlyで厳密に検証する。実装完了後の独立した品質判定に明示的に使用する。コード修正、tasklist更新、文書だけのレビューには使用しない。
+description: 指定されたsteering、6つの永続文書と実装・テストの整合性を独立agentがread-onlyで検証する。単独の明示呼び出し、またはfeature-developmentの内部工程で使用する。修正や仕様文書だけのレビューは行わない。
 ---
 
 # Validate Implementation
 
-実装を変更せず、必ずcustom agent `implementation_validator`を使って完了可否を判定する。
+実装を変更せず、必ずcustom agent `implementation_validator` を使って判定する。状態、Traceability、証跡、PASS / FAIL / BLOCKEDの定義は [validation-contract.md](references/validation-contract.md) を正本とし、mainとvalidatorは検証前に読む。既存のこのSkillを使い、`implement-validation` 等の同役割Skillを追加しない。
 
-## 入力契約と停止条件
+## 呼び出しと入力契約
 
-- `.steering/[YYYYMMDD]-[task]/`を1件、明示入力として受け取る。
-- 引数なし、対象不存在、`.steering/`外、または`requirements.md`、`design.md`、`tasklist.md`不足では検証を開始しない。
-- 未実装taskが残る場合も変更はせず、検証可能な範囲と未完了状態を報告する。
-- `implementation_validator`を利用できない場合はmain agentだけで代行せず、検証未完了として停止する。
+- 単独: ユーザーが `$validate-implementation` と対象 `.steering/[YYYYMMDD]-[task]/` を明示する。このSkillだけを実行し、判定の報告で終了する。
+- 親Workflow内: 明示された `$feature-development` が同じsteeringと契約上の入力を渡す。工程ごとの再承認なしで検証し、判定と修正候補を親へ返す。
+- mainは `requirements.md`、`design.md`、`tasklist.md`、6永続文書、今回の差分分類、現在コード・テスト、過去および現在の検証証跡を渡す。入力の詳細と欠落時の扱いは判定契約に従う。
+- 対象未指定、不存在、`.steering/` 外、3文書不足、またはvalidator利用不可は `BLOCKED`。mainだけで判定を代行しない。未実装taskがあっても、確認可能な範囲は検証して `Not Implemented` を報告する。
 
 ## 実行手順
 
-1. main agentが対象steering、関連する永続文書、仕様、実装範囲を特定する。
-2. `implementation_validator`へ対象パス、関連コードとテスト、制約、期待する報告形式を渡し、`$steering`を明示使用させる。
-3. validatorにrequirementsと受け入れ条件の充足、designとの一致、tasklistの実態、エラー処理、回帰リスク、テスト不足をread-onlyで確認させる。ソース、docs、`.steering/`を変更させない。
-4. [Xcode検証手順](../development-guidelines/references/process.md) に従い、project/workspaceの存在、scheme、configuration、destination、test targetとTest actionを確認させる。確認結果から `xcodebuild build` / `xcodebuild test` の方法を決め、名前や実行先を推測しない。アプリのproject/workspaceがなければ人間によるXcodeでの作成を案内し、アプリ検証不能として報告する。文書のみの変更にアプリ構成を要求しない。
-5. 固定カバレッジ閾値は`docs/development-guidelines.md`で合意済みの場合だけ評価する。一覧取得・ビルド・テストが書き込みを必要とする場合、validatorは必要なコマンドと書き込み先をmainへ返す。mainは親ターンのsandboxとapprovalに従って実行可否を判断し、実行した場合は結果と証跡をvalidatorへ返して評価させる。コード・設定・docs・steeringは変更しない。
-6. agentの完了を待ち、結論、重大度順のfinding、根拠ファイルと位置、実行した検証、残課題を受け取る。
-7. main agentが結果と重要な検証出力を照合し、合格、要修正、検証不能のいずれかを日本語で報告する。修正が必要なら同じsteeringを対象に`$implement-steering`を案内する。このSkill内ではコード修正やtasklist更新を行わず、実装Workflowを暗黙に開始しない。
+1. mainが入力と検証対象の版を揃え、validatorへ対象パス、契約、制約を渡す。validatorは内部Skill `$steering` をread-onlyで明示使用する。
+2. validatorが6永続文書全体の要求・Acceptance Criteria（AC）をコード・テスト・証跡へ対応付ける。steeringの範囲、設計、tasklistの実態と、今回の差分が既存要求へ与える回帰を確認する。
+3. build/test等の追加証跡が必要なら、validatorが必要なコマンド、確認済み構成、書き込み先をmainへ返す。mainが [Xcode検証手順](../development-guidelines/references/process.md) と既存のsandbox/approvalに従って実行し、結果をvalidatorへ戻す。構成を推測せず、validatorはbuild/testを実行しない。
+4. validatorが判定契約に従い結論、全体Traceability、finding、実機限定未検証、修正候補と再検証範囲を返す。mainは証跡との食い違いや不足があればvalidatorへ再評価を依頼し、判定を独自に変更しない。
+5. 単独呼び出しはその結果を報告して終了する。必要なら同じsteeringを対象とする `$implement-steering` を案内するが、修正、tasklist更新、別Workflowを開始しない。
+6. 親Workflow内では判定を親へ返す。親が修正し、Build → Test → このSkillによる再Validationを行う。修正は検証passの終了後に行い、validatorと同じファイルを同時編集しない。失敗だけを理由に確認を求めず、質問の要否は親の [自律判断Policy](../feature-development/references/autonomy-policy.md) に従う。
 
 ## 完了条件
 
-- `implementation_validator`が対象steeringと実装をread-onlyで検証している。
-- 確認済み構成だけで検証され、成功・未設定・失敗・未実行理由が区別されている。0件実行や必須検証不能を合格扱いにしていない。
-- main agentが重大度順のfindingと完了判定を統合している。
-- コード、docs、`.steering/`に変更がない。
+- validatorの判定と、実装状態・検証状態を区別した全体Traceabilityが返っている。
+- 必須の自動検証未実行、0件実行、skipを合格扱いにしていない。
+- 実機限定未検証が残る場合、実装範囲の `PASS` と全ACの `Verified` を区別している。
+- 検証中にソース、テスト、設定、docs、`.steering/` を変更していない。Skillの報告完了と実装の `PASS` は別である。

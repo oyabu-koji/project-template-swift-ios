@@ -1,6 +1,6 @@
 interface:
   display_name: "Validate Implementation"
-  short_description: "steeringと実装の整合性を専門agentで検証する"
-  default_prompt: "Use $validate-implementation to validate an implemented steering plan."
+  short_description: "6永続文書と実装の追跡・検証状態を独立agentが判定する"
+  default_prompt: "Use $validate-implementation to validate a steering plan against all six persistent documents, code, tests, and evidence."
 policy:
   allow_implicit_invocation: false

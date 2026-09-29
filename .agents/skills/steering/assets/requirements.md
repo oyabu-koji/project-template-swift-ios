@@ -27,7 +27,14 @@
 
 - [今回実装しないこと]
 
+## 要求差分（feature-development内で使用）
+
+- 比較基準: [文書・コードのcommit/hash、過去Validation、または基準不明の理由]
+
+| 要求/AC参照 | 旧版/現行の根拠 | Unchanged / Added / Modified / Removed | 実装・検証状態 | 実装/是正理由 | 回帰範囲 |
+| --- | --- | --- | --- | --- | --- |
+
 ## 参照
 
-- `docs/ideas/YYYYMMDD-[feature-name].md`
+- [入力正本: 日付付き確定仕様、またはGate通過済み永続6文書]
 - [関連する永続文書]

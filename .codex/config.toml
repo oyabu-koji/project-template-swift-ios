@@ -1,3 +1,5 @@
+# Custom agents are discovered from .codex/agents/*.toml.
+# Approval and sandbox settings are inherited; this file does not override them.
 [agents]
 enabled = true
 max_concurrent_threads_per_session = 4

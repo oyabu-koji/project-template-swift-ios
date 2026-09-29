@@ -1,0 +1,6 @@
+interface:
+  display_name: "Feature Development"
+  short_description: "永続6文書から差分計画・実装・独立検証・修正を自律的に完遂する"
+  default_prompt: "Use $feature-development to implement the confirmed permanent documents incrementally through Gate review, planning, Build/Test, and independent validation."
+policy:
+  allow_implicit_invocation: false

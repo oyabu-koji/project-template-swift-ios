@@ -7,7 +7,9 @@
 3. taskを所有範囲が判定できる粒度にする
 4. taskを1件実装し、受け入れ条件を検証する
 5. tasklistの状態と検証証跡を更新する
-6. 全task完了後、同じsteeringをvalidationへ渡す
+6. 実装taskと自動検証が完了したら、実機限定の未検証を区別して同じsteeringをvalidationへ渡す
+
+feature-development内では失敗を親が自律修正し、Build/Test/Validationを再実行する。親の完了判定はvalidate-implementationの契約に従う。単独Workflowは指定された工程だけを実行する。
 
 ## Xcode検証手順
 
@@ -18,11 +20,17 @@
 1. 対象がテンプレート・文書のみか、アプリの変更かを確認する。このAIテンプレートrepoにXcodeプロジェクトは不要であり、文書だけの検証のために生成しない。アプリの検証でproject/workspaceがなければ、人間がXcodeでiOS App / SwiftUI / Swiftとして作成するよう案内し、アプリ検証を停止する。
 2. macOSとXcodeの利用可否を確認し、`xcode-select -p`、`xcodebuild -version`、`xcrun swift --version` を必要に応じて確認する。Command Line ToolsのみでiOSビルド可能と扱わない。未導入や不一致では報告し、ツールの導入や端末全体のXcode選択を自動変更しない。
 3. `.xcodeproj` / `.xcworkspace` の存在と内容、workspaceが参照するproject、既存の開発手順を確認する。project内の内部workspaceや依存先・サンプルをアプリの入口と取り違えない。複数候補は用途から選び、特定できなければ確認する。workspaceの存在だけで優先順位を決めない。
-4. 選んだ入口だけを指定して `xcodebuild -list -project "<確認済みprojectパス>"` または `xcodebuild -list -workspace "<確認済みworkspaceパス>"` を実行し、schemeを確認する。targetはproject設定または構成projectの一覧でも確認する。schemeがCLIから見えなければ既存の共有設定を確認し、名前の推測や新規scheme生成で補わない。
+4. 選んだ入口だけを指定して `xcodebuild -list -project "<確認済みprojectパス>"` または `xcodebuild -list -workspace "<確認済みworkspaceパス>"` を実行し、schemeを確認する。targetはproject設定または構成projectの一覧でも確認する。schemeがCLIから見えなければ既存の共有設定を確認する。検出失敗を、名前の推測や未確認の新規scheme生成で補わない。
 5. 選んだschemeのBuild/Test action、app/test target、configuration、Swift言語モード、最低対応iOSを確認する。テストはTest actionまたは採用済みtest planに対象が含まれ、有効であることを確認する。test planの新規作成は必須にしない。
 6. 同じ入口とschemeを指定した `xcodebuild ... -scheme "<確認済みscheme>" -showdestinations` で利用可能な実行先を確認する。`...`は手順4で確定した `-project` または `-workspace` 引数を表す。SDK・Simulator runtime・端末の利用可否と変更対象への適合からdestinationを選ぶ。Simulator名、OS、IDを固定せず、実行時の一覧を使う。テストには実行可能な具体的destinationが必要で、ビルド専用のgeneric destinationを流用しない。
 
 一覧確認も含め、Xcodeコマンドはキャッシュや依存解決への書き込みを伴う場合がある。権限・書き込み先・既存依存の状態を実行前に確認し、取得や設定更新が必要なら既存の権限と合意範囲に従う。権限不足で構成を取得できない場合も、推測でbuild/testを進めない。
+
+### feature-developmentでテスト構成が未設定の場合
+
+自動Testの未設定は合格にせず、親が不足を実装taskとして計画し修復する。永続文書のテスト方針と確認済みXcode/iOS設定に従い、Apple標準のSwift TestingまたはXCTestでテストコード、既存の人間作成project内のtest target・所属、Test action/test plan・共有schemeの不足設定を作成・補修できる。内部のテスト構成判断に工程承認を求めない。
+
+これは構成を調べた後の計画的な実装であり、存在しないproject・scheme・destinationを推測して検証する代用ではない。親はprepare-steeringへ不足・根拠・所有範囲を渡して計画を更新し、implement-steeringで補修した後、一覧・target・Test action・destinationを再確認してbuild/testを行う。project/workspaceの独自生成、外部依存・未合意のテスト基盤導入、署名・確定技術設定の変更は行わない。単独のvalidateでは構成を変更せず、必要な修正を返す。
 
 ### ビルド・テスト・起動確認
 
@@ -35,7 +43,7 @@ xcodebuild -project "<確認済みprojectパス>" -scheme "<確認済みscheme>"
 
 - `build`は対象のコンパイル・リンクと診断を確認する。署名・Team・Capabilities・最低対応iOSをエラー回避のために無断変更しない。
 - `test`は有効なtest targetとTest actionを確認できた場合に実行する。実際に実行されたテスト数、skip、失敗を結果から確認し、終了コード0でも0件実行をテスト合格扱いにしない。テスト未設定だけを自動的に失敗とはしないが、受け入れ条件が要求するテストの欠如は未達として扱う。
-- Unit testは採用済みのSwift TestingまたはXCTest、UI testはXCTestの構成に従う。検証のためだけにテスト基盤や外部ツールを追加しない。
+- Unit testは採用済みのSwift TestingまたはXCTest、UI testはXCTestの構成に従う。合意外のテスト基盤や外部ツールを検証のためだけに追加しない。
 - カバレッジは対象と測定条件が合意され、実行可能な場合に取得する。固定閾値は `docs/development-guidelines.md` に合意済みの場合だけ評価する。未取得を0%や成功とみなさない。
 - 起動・画面・権限・端末機能の確認は、Xcodeで対象schemeとSimulatorまたは実機を選んで行う。人間が行った確認はその旨と証跡を記録する。build成功やPreview表示だけで実機・起動確認済みにしない。
 - SwiftLint等の外部lintを必須ゲートにせず、既存の合意済み構成がある場合だけ対象にする。XcodeGen、Tuist、CocoaPods、その他の外部ツールを標準導入しない。
@@ -45,7 +53,7 @@ xcodebuild -project "<確認済みprojectパス>" -scheme "<確認済みscheme>"
 - DerivedData、result bundle、キャッシュ、Simulator状態などの書き込みを区別する。許可済みの作業用出力先を選び、必要なら `-derivedDataPath` / `-resultBundlePath` を指定する。出力先を指定しても全書き込みがそこだけに収まるとは扱わない。
 - read-onlyのvalidatorは権限を変更せず、実行できないコマンド、必要な書き込み先・実行環境をmainへ返す。mainは親ターンのsandboxとapprovalに従って実行可否を判断し、実行した場合はコマンド・対象・結果をvalidatorへ返す。検証中はコード、設定、docs、steeringを更新しない。
 - コマンド、Xcodeバージョン、project/workspace、scheme、configuration、destination、テスト対象、終了結果、ログまたはresult bundleの場所を記録する。implementではtasklist、validationでは報告へ残す。
-- 成功、失敗、未設定、環境・権限による未実行、対象外を分ける。必須検証が未実行なら完了・合格にせず、未確認範囲を報告する。
+- 成功、失敗、未設定、環境・権限による未実行、対象外を分ける。必須の自動検証が未実行なら完了・合格にせず、未確認範囲を報告する。実機限定ACだけが残る場合の実装完了は [Validation契約](../../validate-implementation/references/validation-contract.md) に従い、全AC検証済みとは区別する。
 
 コマンドの参照: [AppleのXcodeコマンドライン資料](https://developer.apple.com/library/archive/technotes/tn2339/_index.html)。利用環境のオプションは `xcodebuild -help` でも確認する。
 

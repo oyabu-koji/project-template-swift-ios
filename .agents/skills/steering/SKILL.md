@@ -1,6 +1,6 @@
 ---
 name: steering
-description: docs/ideasの日付付き仕様から作成された.steering/[YYYYMMDD]-[task]/のrequirements.md、design.md、tasklist.mdを計画・実装・検証の間で維持する場合に明示的に使用する。initial-requirementsからの直接計画、仕様正本の代替、実装検証中の進捗改変には使用しない。
+description: 確定した仕様またはGate通過済み永続文書から作成された.steering/[YYYYMMDD]-[task]/のrequirements.md、design.md、tasklist.mdを計画・実装・検証の間で維持する場合に明示的に使用する。initial-requirementsからの直接計画、仕様正本の代替、実装検証中の進捗改変には使用しない。
 ---
 
 # Steering
@@ -8,13 +8,14 @@ description: docs/ideasの日付付き仕様から作成された.steering/[YYYY
 ## 役割
 
 - `.steering/[YYYYMMDD]-[task]/` を実装単位の要求、設計、進捗、検証証跡の正本にする
-- `docs/ideas/` の仕様を複製せず、今回の実装範囲と判断へ変換する
+- 確定仕様・永続文書を複製せず、今回の実装範囲と判断へ変換する
 - `$prepare-steering`、`$implement-steering`、`$validate-implementation` の受け渡しを保つ
 - `$steering`は内部で明示使用する専門Skillであり、ユーザー向けの計画・実装Workflowとは別に維持する
 
 ## 入力契約
 
-- `$prepare-steering`: `docs/ideas/YYYYMMDD-[feature-name].md`
+- 単独の `$prepare-steering`: `docs/ideas/YYYYMMDD-[feature-name].md`
+- feature-development内の `$prepare-steering`: Gate通過済み永続6文書、要求差分と比較基準、調査結果、親が指定した出力先
 - `$implement-steering` / `$validate-implementation`: `.steering/[YYYYMMDD]-[task]/`
 - `docs/ideas/initial-requirements.md` から直接steeringを作らない
 
@@ -24,6 +25,8 @@ description: docs/ideasの日付付き仕様から作成された.steering/[YYYY
 - `design.md`: 現状、設計、依存関係、エラー、テスト、実装順
 - `tasklist.md`: 小さなtask、状態、所有範囲、検証証跡、振り返り
 
+親実行ではrequirementsに要求分類と比較基準、designに差分と回帰影響、tasklistにGate/Validation結果・Traceabilityを保持する。計画agentは3文書だけを作成し、mainが各実行後に結果を同期する。採点はreview-docs、実装判定はvalidate-implementationを参照し、steeringで独自判定しない。
+
 新規作成時は [assets/requirements.md](assets/requirements.md)、[assets/design.md](assets/design.md)、[assets/tasklist.md](assets/tasklist.md) を土台にし、対象に不要な節は削る。
 
 ## 状態と更新規則
@@ -31,10 +34,10 @@ description: docs/ideasの日付付き仕様から作成された.steering/[YYYY
 - `pending`: 未着手
 - `in-progress`: 所有者と対象を確定して実行中
 - `done`: 受け入れ条件と検証証跡を満たす
-- `blocked`: 外部判断または技術的障害を理由付きで記録
+- `blocked`: 外部判断や環境不足など、自律修正だけでは進められない阻害を理由付きで記録
 - `cancelled`: 方針変更により不要になった理由を記録
 
-書き込みtaskは原則1件ずつ `in-progress` にし、完了またはblockedを記録してから依存taskへ進む。設計判断が変わった場合だけrequirements/designも更新する。
+書き込みtaskは原則1件ずつ `in-progress` にし、doneと証跡を記録してから依存taskへ進む。blockedのtaskに依存する作業は進めず、独立taskを先に行う。自動修正可能な失敗はin-progressのまま修正する。設計判断が変わった場合だけrequirements/designも更新する。実機限定の検証taskは実装taskと分け、未完了をdoneに偽装しない。
 
 ## Validationへの引き継ぎ
 

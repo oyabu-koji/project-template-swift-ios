@@ -20,13 +20,13 @@ description: validなdocs/ideas/initial-requirements.mdから6つの永続プロ
 以下の順序を守り、各`document_author`へ出力1ファイルと必要な先行文書だけを渡す。新しいagentインスタンスを文書ごとに使ってよい。委任時は所有ファイルを明示し、同じコードベースに他の作業者がいること、他者の変更を戻さないことを伝える。
 
 1. `document_author`に`$prd-writing`を明示使用させ、`docs/product-requirements.md`を作成する。
-2. `doc_reviewer`にPRDだけをレビューさせる。main agentが重大度順に結果を統合し、ユーザーの承認を得る。承認までは次へ進まない。
+2. `$review-docs` Interactive Modeを明示使用し、`doc_reviewer`にPRDだけを共通基準でレビューさせる。main agentが重大度順に結果を統合し、ユーザーの承認を得る。承認までは次へ進まない。
 3. `document_author`に`$functional-design`を明示使用させ、`docs/functional-design.md`を作成する。
 4. `document_author`に`$architecture-design`を明示使用させ、`docs/architecture.md`を作成する。
 5. `document_author`に`$repository-structure`を明示使用させ、`docs/repository-structure.md`を作成する。
 6. `document_author`に`$development-guidelines`を明示使用させ、`docs/development-guidelines.md`を作成する。
 7. `document_author`に`$glossary-creation`を明示使用させ、`docs/glossary.md`を作成する。
-8. `doc_reviewer`に6文書すべての完全性と相互整合性をレビューさせる。
+8. `$review-docs` Interactive Modeを明示使用し、`doc_reviewer`に6文書すべてを共通基準でレビューさせる。
 
 ## main agentの責務
 
@@ -42,3 +42,5 @@ description: validなdocs/ideas/initial-requirements.mdから6つの永続プロ
 - PRDレビュー、ユーザー承認、6文書の最終レビューが完了している。
 - 各委任の所有範囲外に変更がなく、未解決findingが報告されている。
 - アプリコードと`.steering/`を変更していない。
+
+- 永続6文書が確定したら `$feature-development` を案内する。このSkill内では一括実装を開始しない。

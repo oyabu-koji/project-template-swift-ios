@@ -23,10 +23,12 @@
 ## Workflow
 
 - 初期開発: `$init-project` → `$define-requirements` → `$setup-project`
-- セットアップ後の機能開発: `$define-requirements` → `$prepare-steering` → `$implement-steering` → `$validate-implementation`
-- `$review-docs` は必要時の独立した読み取り専用レビューとする
-- 要件定義は対話と合意、setupは永続6文書、prepareはsteering計画、implementは実装と進捗・検証証跡、validateは変更を伴わない独立検証を担当する
-- 次工程は案内に留め、別Workflowを暗黙に開始しない。invocation policyと詳細なroutingは `AGENTS.md` を参照する
+- Ideas・要求整理: `$review-docs` Interactive Modeと `$define-requirements` で質問・代替案を交えて合意する
+- 永続6文書確定後の一括実行: `$feature-development` がGate Review、差分計画、実装、Build/Test、独立Validation、修正・再検証を管理する。工程ごとの承認は求めない
+- 個別実行も維持する: `$prepare-steering` → `$implement-steering` → `$validate-implementation`。個別Skillはその工程だけで終了し、矢印は次工程の案内を示す
+- `$feature-development` の入力正本は永続6文書。追加のconfirmed specは合意済み変更を永続文書へ反映してからGate Reviewを行う。単独のprepareは引き続き日付付きspecを入力とする
+- reviewとvalidationは読み取り専用の独立評価とし、自動修正はmain agentが管理する。追加開発では差分実装・回帰確認と永続6文書全体の整合確認を行う
+- invocation policyは `AGENTS.md`、自律判断と停止条件は `.agents/skills/feature-development/references/autonomy-policy.md` を参照する
 
 ## 制約
 

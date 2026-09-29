@@ -21,6 +21,16 @@
 | --- | --- | --- | --- |
 | - | - | 未実施 | - |
 
+## 親Workflowの判定履歴（feature-development内で使用）
+
+- 文書の版/hash・コードcommitと未コミット差分:
+- Gate結果と対象版:
+- Validation結果・Traceability: [validate-implementationの出力を記録]
+- 修正原因・対象・再Build/Test/Validation結果:
+- 過去Verifiedの再利用根拠とRegression結果:
+- 実機限定の未検証AC・理由・手順:
+- 阻害要因と再開点:
+
 ## 振り返り
 
 - 実装完了日: [date]
